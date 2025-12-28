@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartas do Coração - Jogo de Perguntas para Casais</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --rose-deep: #8B354E;
+            --rose-primary: #C85C7C;
+            --rose-light: #E8A5B8;
+            --rose-soft: #F5D9E1;
+            --cream: #FFF8F0;
+            --gold: #D4AF37;
+            --shadow: rgba(139, 53, 78, 0.15);
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #FFE9E0 50%, var(--rose-soft) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(232, 165, 184, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(200, 92, 124, 0.08) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(30px, -30px) rotate(5deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            color: var(--rose-deep);
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+            text-shadow: 2px 4px 8px var(--shadow);
+            line-height: 1;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--rose-primary);
+            font-style: italic;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .heart-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .heart-divider::before,
+        .heart-divider::after {
+            content: '';
+            height: 2px;
+            width: 80px;
+            background: linear-gradient(to right, transparent, var(--rose-light), transparent);
+        }
+
+        .heart-symbol {
+            font-size: 1.5rem;
+            color: var(--rose-primary);
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10% { transform: scale(1.1); }
+            20% { transform: scale(1); }
+            30% { transform: scale(1.15); }
+            40% { transform: scale(1); }
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 550px;
+            height: 420px;
+            position: relative;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #FFFFFF 0%, var(--cream) 100%);
+            border-radius: 30px;
+            box-shadow: 
+                0 20px 60px var(--shadow),
+                0 0 0 1px rgba(212, 175, 55, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.flip {
+            animation: cardFlip 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes cardFlip {
+            0% { transform: rotateY(0deg) scale(1); }
+            50% { transform: rotateY(90deg) scale(0.95); }
+            100% { transform: rotateY(0deg) scale(1); }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            animation: shimmer 4s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .card-corner {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--gold);
+            opacity: 0.3;
+        }
+
+        .card-corner.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 10px 0 0 0;
+        }
+
+        .card-corner.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+            border-radius: 0 10px 0 0;
+        }
+
+        .card-corner.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+            border-radius: 0 0 0 10px;
+        }
+
+        .card-corner.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+            border-radius: 0 0 10px 0;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .card-category {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--rose-primary);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .card-question {
+            font-size: 1.8rem;
+            color: var(--rose-deep);
+            text-align: center;
+            line-height: 1.5;
+            font-weight: 600;
+            max-width: 450px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 1s ease-out 0.5s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        button {
+            font-family: 'Playfair Display', serif;
+            padding: 18px 45px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px var(--shadow);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--rose-primary) 0%, var(--rose-deep) 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--gold) 0%, #C9A959 100%);
+            color: var(--rose-deep);
+        }
+
+        .counter {
+            text-align: center;
+            font-size: 1rem;
+            color: var(--rose-primary);
+            margin-top: 30px;
+            font-style: italic;
+            animation: fadeIn 1s ease-out 0.7s backwards;
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeInUp 1s ease-out 0.5s backwards;
+        }
+
+        .mode-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 25px;
+            padding: 35px 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid transparent;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .mode-card:hover::before {
+            left: 100%;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--rose-primary);
+            box-shadow: 0 15px 40px var(--shadow);
+        }
+
+        .mode-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .mode-card:nth-child(2) .mode-icon {
+            animation-delay: 0.5s;
+        }
+
+        .mode-card:nth-child(3) .mode-icon {
+            animation-delay: 1s;
+        }
+
+        .mode-card:nth-child(4) .mode-icon {
+            animation-delay: 1.5s;
+        }
+
+        .mode-card:nth-child(5) .mode-icon {
+            animation-delay: 2s;
+        }
+
+        .mode-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--rose-deep);
+            margin-bottom: 10px;
+        }
+
+        .mode-description {
+            font-size: 1rem;
+            color: var(--rose-primary);
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--rose-primary), var(--rose-deep));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #888 0%, #666 100%);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                padding: 35px;
+                height: 380px;
+            }
+
+            .card-question {
+                font-size: 1.5rem;
+            }
+
+            button {
+                padding: 15px 35px;
+                font-size: 1rem;
+            }
+
+            .mode-selection {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .mode-card {
+                padding: 30px 20px;
+            }
+
+            .mode-icon {
+                font-size: 3rem;
+            }
+
+            .mode-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        .instructions {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 1s ease-out 0.4s backwards;
+        }
+
+        .instructions p {
+            font-size: 1.15rem;
+            color: var(--rose-deep);
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cartas do Coração</h1>
+            <div class="heart-divider">
+                <span class="heart-symbol">❤</span>
+            </div>
+            <p class="subtitle">Um jogo para aproximar corações</p>
+        </div>
+
+        <div class="instructions" id="instructions">
+            <p>Escolha o modo que combina com o momento de vocês. Cada modo traz perguntas especialmente selecionadas para criar conexões únicas.</p>
+        </div>
+
+        <!-- Tela de Seleção de Modos -->
+        <div class="mode-selection" id="modeSelection">
+            <div class="mode-card" onclick="iniciarModo('leve')">
+                <span class="mode-icon">😄</span>
+                <h3 class="mode-title">Leve e Divertido</h3>
+                <p class="mode-description">Momentos de risadas e descontração. Perfeito para relaxar juntos.</p>
+            </div>
+
+            <div class="mode-card" onclick="iniciarModo('intimo')">
+                <span class="mode-icon">💝</span>
+                <h3 class="mode-title">Intimidade</h3>
+                <p class="mode-description">Conexão profunda e vulnerabilidade. Para momentos de proximidade.</p>
+            </div>
+
+            <div class="mode-card" onclick="iniciarModo('profundo')">
+                <span class="mode-icon">🔮</span>
+                <h3 class="mode-title">Profundo/Alinhamento</h3>
+                <p class="mode-description">Valores, sonhos e futuro. Para alinhar visões e crescer juntos.</p>
+            </div>
+
+            <div class="mode-card" onclick="iniciarModo('romantico')">
+                <span class="mode-icon">🌹</span>
+                <h3 class="mode-title">Romântico</h3>
+                <p class="mode-description">Paixão e amor. Para celebrar o romance entre vocês.</p>
+            </div>
+
+            <div class="mode-card" onclick="iniciarModo('memorias')">
+                <span class="mode-icon">📸</span>
+                <h3 class="mode-title">Memórias e Nostalgia</h3>
+                <p class="mode-description">Reviver momentos especiais. Uma viagem pela história de vocês.</p>
+            </div>
+
+            <div class="mode-card" onclick="iniciarModo('metas')">
+                <span class="mode-icon">🎯</span>
+                <h3 class="mode-title">Metas de Ano Novo</h3>
+                <p class="mode-description">Planejar o futuro juntos. Conversas sobre sonhos e objetivos compartilhados.</p>
+            </div>
+        </div>
+
+        <!-- Área do Jogo (inicialmente escondida) -->
+        <div class="game-area hidden" id="gameArea">
+            <div class="mode-badge" id="modeBadge">Modo Selecionado</div>
+            
+            <div class="card-container">
+                <div class="card" id="card">
+                    <div class="card-corner top-left"></div>
+                    <div class="card-corner top-right"></div>
+                    <div class="card-corner bottom-left"></div>
+                    <div class="card-corner bottom-right"></div>
+                    
+                    <div class="card-icon" id="cardIcon">💕</div>
+                    <div class="card-category" id="cardCategory">Conexão</div>
+                    <div class="card-question" id="cardQuestion">
+                        Clique abaixo para sortear sua primeira carta
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="sortearCarta()">
+                    <span style="position: relative; z-index: 1;">Sortear Carta</span>
+                </button>
+                <button class="btn-secondary" onclick="voltarModos()">
+                    <span style="position: relative; z-index: 1;">Mudar Modo</span>
+                </button>
+                <button class="btn-back" onclick="resetarJogo()">
+                    <span style="position: relative; z-index: 1;">Reiniciar</span>
+                </button>
+            </div>
+
+            <div class="counter" id="counter">Cartas sorteadas: 0</div>
+        </div>
+    </div>
+
+    <script>
+        const perguntasPorModo = {
+            leve: [
+                { categoria: "Diversão", icon: "😄", pergunta: "Qual foi o momento mais engraçado que vivemos juntos?" },
+                { categoria: "Risadas", icon: "😂", pergunta: "O que eu faço que sempre te faz rir?" },
+                { categoria: "Brincadeira", icon: "🎪", pergunta: "Se fôssemos personagens de desenho animado, quem seríamos?" },
+                { categoria: "Curiosidade", icon: "🤔", pergunta: "Qual é a coisa mais estranha que você gostaria que fizéssemos juntos?" },
+                { categoria: "Desafio", icon: "🎲", pergunta: "Qual atividade maluca você quer que a gente experimente?" },
+                { categoria: "Fantasia", icon: "🎭", pergunta: "Se pudéssemos ter qualquer superpoder juntos, qual seria?" },
+                { categoria: "Aventura", icon: "🎢", pergunta: "Qual é a aventura mais louca que você imagina para nós?" },
+                { categoria: "Alegria", icon: "☀️", pergunta: "O que sempre te faz sorrir quando pensa em mim?" },
+                { categoria: "Espontaneidade", icon: "🎉", pergunta: "Qual foi a coisa mais espontânea que já fizemos?" },
+                { categoria: "Leveza", icon: "🦋", pergunta: "Qual momento bobo nosso você adora lembrar?" }
+            ],
+            intimo: [
+                { categoria: "Intimidade", icon: "💝", pergunta: "O que eu faço que faz você se sentir mais amado(a)?" },
+                { categoria: "Vulnerabilidade", icon: "💭", pergunta: "Existe algum medo que você tem sobre nosso relacionamento?" },
+                { categoria: "Conexão", icon: "🫂", pergunta: "Quando você se sente mais próximo(a) de mim?" },
+                { categoria: "Confiança", icon: "🔐", pergunta: "O que eu faço que aumenta sua confiança em nós?" },
+                { categoria: "Segurança", icon: "🏠", pergunta: "Em que momentos você se sente mais seguro(a) comigo?" },
+                { categoria: "Afeto", icon: "💕", pergunta: "Como você gosta de receber carinho?" },
+                { categoria: "Desejo", icon: "🔥", pergunta: "O que te atrai em mim além do físico?" },
+                { categoria: "Intimidade", icon: "🌙", pergunta: "Qual é o seu momento favorito do dia comigo?" },
+                { categoria: "Partilha", icon: "💫", pergunta: "O que você nunca me contou mas gostaria de compartilhar?" },
+                { categoria: "Entrega", icon: "🤍", pergunta: "Como posso te fazer sentir ainda mais especial?" }
+            ],
+            profundo: [
+                { categoria: "Verdade", icon: "🔍", pergunta: "Qual é a mentira que nós contamos para nós mesmos sobre o nosso relacionamento?" },
+                { categoria: "Solidão", icon: "💭", pergunta: "Em que momento específico você se sentiu sozinho(a), mesmo estando ao meu lado?" },
+                { categoria: "Conversa Difícil", icon: "🗣️", pergunta: "Qual é a conversa difícil que deveríamos ter tido há um ano e ainda não tivemos?" },
+                { categoria: "Sacrifício", icon: "⚖️", pergunta: "O que você acha que eu sacrifico para estar com você?" },
+                { categoria: "Proteção", icon: "🛡️", pergunta: "Se você pudesse apagar uma memória minha para que eu sofresse menos hoje, qual seria?" },
+                { categoria: "Reflexão", icon: "🪞", pergunta: "Quando é que eu não sou uma pessoa boa para você?" },
+                { categoria: "Nostalgia", icon: "⏳", pergunta: "De qual versão minha (do passado) você sente mais falta?" },
+                { categoria: "Admiração", icon: "✨", pergunta: "O que eu faço, sem perceber, que faz você questionar se eu te admiro?" },
+                { categoria: "Limitação", icon: "🔗", pergunta: "Em que área da sua vida você sente que, de alguma forma, eu te limito ou te 'seguro'?" },
+                { categoria: "Autenticidade", icon: "🎭", pergunta: "Qual é a maior diferença entre quem eu sou para o mundo lá fora e quem eu sou com você dentro de casa?" },
+                { categoria: "Aceitação", icon: "🤲", pergunta: "O que você gostaria que eu parasse de tentar 'consertar' ou mudar em você?" },
+                { categoria: "Desafio", icon: "🧩", pergunta: "Qual é a coisa mais difícil de aceitar na minha personalidade?" },
+                { categoria: "Narrativa", icon: "📖", pergunta: "Se o nosso relacionamento acabasse hoje, qual seria a 'versão da história' que você contaria aos seus amigos?" },
+                { categoria: "Necessidade", icon: "🙏", pergunta: "O que você precisa desesperadamente de mim agora, mas tem medo ou vergonha de pedir?" },
+                { categoria: "Felicidade", icon: "💫", pergunta: "(Olhando nos olhos) Você está feliz de verdade com a vida que construímos, ou apenas confortável?" },
+                { categoria: "Amor", icon: "❤️", pergunta: "Você se sente amado(a) por mim?" }
+            ],
+            romantico: [
+                { categoria: "Amor", icon: "❤️", pergunta: "O que significa 'amar' para você?" },
+                { categoria: "Romance", icon: "🌹", pergunta: "Qual gesto romântico meu te marcou mais?" },
+                { categoria: "Paixão", icon: "🔥", pergunta: "O que te apaixona em mim hoje tanto quanto no início?" },
+                { categoria: "Magia", icon: "✨", pergunta: "Qual foi o momento em que você percebeu que estava se apaixonando?" },
+                { categoria: "Beleza", icon: "🌺", pergunta: "O que você acha mais bonito em mim?" },
+                { categoria: "Admiração", icon: "💖", pergunta: "Qual qualidade minha você mais admira?" },
+                { categoria: "Sedução", icon: "💋", pergunta: "O que em mim te seduz?" },
+                { categoria: "Declaração", icon: "💌", pergunta: "Se fosse me escrever uma carta de amor, o que diria?" },
+                { categoria: "Encantamento", icon: "🦢", pergunta: "O que sobre nós parece um conto de fadas?" },
+                { categoria: "Eternidade", icon: "♾️", pergunta: "Por que você escolheria ficar comigo para sempre?" }
+            ],
+            memorias: [
+                { categoria: "Memórias", icon: "🌟", pergunta: "Qual foi o momento em que você percebeu que estava se apaixonando por mim?" },
+                { categoria: "Conexão", icon: "💕", pergunta: "Qual é a sua lembrança favorita de nós dois?" },
+                { categoria: "Nostalgia", icon: "📸", pergunta: "Se pudesse reviver um dia nosso, qual seria?" },
+                { categoria: "Início", icon: "🌅", pergunta: "O que você mais lembra do nosso primeiro encontro?" },
+                { categoria: "Marcos", icon: "🎊", pergunta: "Qual foi o momento mais marcante do nosso relacionamento?" },
+                { categoria: "Descoberta", icon: "🔍", pergunta: "Qual foi a primeira coisa que te chamou atenção em mim?" },
+                { categoria: "Tradições", icon: "🎭", pergunta: "Qual memória nossa virou uma tradição especial?" },
+                { categoria: "Viagens", icon: "🗺️", pergunta: "Qual viagem ou passeio nosso você nunca esquece?" },
+                { categoria: "Superação", icon: "💪", pergunta: "Qual desafio superamos juntos que nos fortaleceu?" },
+                { categoria: "Celebração", icon: "🎉", pergunta: "Qual conquista nossa como casal você mais celebra?" }
+            ],
+            metas: [
+                { categoria: "Viagens", icon: "✈️", pergunta: "Qual destino você sonha em conhecermos juntos este ano?" },
+                { categoria: "Saúde", icon: "💪", pergunta: "Que hábito de saúde poderíamos começar a fazer juntos?" },
+                { categoria: "Financeiro", icon: "💰", pergunta: "Qual objetivo financeiro você gostaria que alcançássemos como casal?" },
+                { categoria: "Aprendizado", icon: "📚", pergunta: "O que você gostaria que aprendêssemos juntos este ano?" },
+                { categoria: "Casa", icon: "🏡", pergunta: "Que mudança você gostaria de fazer no nosso lar?" },
+                { categoria: "Aventura", icon: "🎢", pergunta: "Qual experiência nova e emocionante deveríamos viver juntos?" },
+                { categoria: "Conexão", icon: "💑", pergunta: "Como podemos fortalecer ainda mais nosso relacionamento este ano?" },
+                { categoria: "Amizades", icon: "👥", pergunta: "Que tipo de experiências sociais você quer que tenhamos como casal?" },
+                { categoria: "Família", icon: "👨‍👩‍👧", pergunta: "Qual plano familiar você gostaria que começássemos a construir?" },
+                { categoria: "Hobbies", icon: "🎨", pergunta: "Que hobby ou atividade nova poderíamos explorar juntos?" },
+                { categoria: "Rotina", icon: "📅", pergunta: "Que ritual semanal ou mensal você gostaria de criarmos?" },
+                { categoria: "Contribuição", icon: "🤝", pergunta: "Como poderíamos contribuir juntos para algo maior que nós?" },
+                { categoria: "Celebração", icon: "🎊", pergunta: "Que data ou momento especial deveríamos celebrar melhor este ano?" },
+                { categoria: "Qualidade", icon: "⏰", pergunta: "Como podemos ter mais tempo de qualidade juntos regularmente?" },
+                { categoria: "Crescimento", icon: "🌱", pergunta: "Em que área você quer que cresçamos juntos como casal?" },
+                { categoria: "Surpresa", icon: "🎁", pergunta: "Que surpresa especial você gostaria de planejar para mim este ano?" },
+                { categoria: "Comunicação", icon: "💬", pergunta: "Como podemos melhorar nossa comunicação sobre planos e sonhos?" },
+                { categoria: "Romance", icon: "💝", pergunta: "Que gesto romântico recorrente você quer que façamos parte da rotina?" },
+                { categoria: "Projeto", icon: "🔨", pergunta: "Qual projeto concreto você quer que realizemos juntos?" },
+                { categoria: "Compromisso", icon: "🤞", pergunta: "Que promessa sobre nosso futuro você quer que façamos agora?" }
+            ]
+        };
+
+        let modoAtual = null;
+        let cartasUsadas = [];
+        let totalSorteado = 0;
+
+        function iniciarModo(modo) {
+            modoAtual = modo;
+            cartasUsadas = [];
+            totalSorteado = 0;
+
+            // Esconder seleção de modos
+            document.getElementById('modeSelection').classList.add('hidden');
+            document.getElementById('instructions').classList.add('hidden');
+            
+            // Mostrar área do jogo
+            document.getElementById('gameArea').classList.remove('hidden');
+
+            // Atualizar badge do modo
+            const modoNomes = {
+                leve: 'Leve e Divertido 😄',
+                intimo: 'Intimidade 💝',
+                profundo: 'Profundo/Alinhamento 🔮',
+                romantico: 'Romântico 🌹',
+                memorias: 'Memórias e Nostalgia 📸',
+                metas: 'Metas de Ano Novo 🎯'
+            };
+            document.getElementById('modeBadge').textContent = modoNomes[modo];
+
+            // Resetar carta
+            document.getElementById('cardIcon').textContent = '💕';
+            document.getElementById('cardCategory').textContent = 'Início';
+            document.getElementById('cardQuestion').textContent = 'Clique abaixo para sortear sua primeira carta';
+            document.getElementById('counter').textContent = 'Cartas sorteadas: 0';
+        }
+
+        function voltarModos() {
+            // Mostrar seleção de modos
+            document.getElementById('modeSelection').classList.remove('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
+            
+            // Esconder área do jogo
+            document.getElementById('gameArea').classList.add('hidden');
+            
+            // Resetar variáveis
+            modoAtual = null;
+            cartasUsadas = [];
+            totalSorteado = 0;
+        }
+
+        function sortearCarta() {
+            if (!modoAtual) return;
+
+            const card = document.getElementById('card');
+            const perguntas = perguntasPorModo[modoAtual];
+            
+            // Animação de flip
+            card.classList.add('flip');
+            
+            setTimeout(() => {
+                // Se todas as cartas já foram usadas, resetar
+                if (cartasUsadas.length === perguntas.length) {
+                    cartasUsadas = [];
+                }
+                
+                // Filtrar perguntas não usadas
+                const perguntasDisponiveis = perguntas.filter((_, index) => 
+                    !cartasUsadas.includes(index)
+                );
+                
+                // Sortear uma pergunta aleatória
+                const indexAleatorio = Math.floor(Math.random() * perguntasDisponiveis.length);
+                const perguntaSorteada = perguntasDisponiveis[indexAleatorio];
+                
+                // Encontrar o índice original e marcar como usada
+                const indexOriginal = perguntas.indexOf(perguntaSorteada);
+                cartasUsadas.push(indexOriginal);
+                
+                // Atualizar a carta
+                document.getElementById('cardIcon').textContent = perguntaSorteada.icon;
+                document.getElementById('cardCategory').textContent = perguntaSorteada.categoria;
+                document.getElementById('cardQuestion').textContent = perguntaSorteada.pergunta;
+                
+                // Atualizar contador
+                totalSorteado++;
+                document.getElementById('counter').textContent = `Cartas sorteadas: ${totalSorteado}`;
+                
+                card.classList.remove('flip');
+            }, 400);
+        }
+
+        function resetarJogo() {
+            cartasUsadas = [];
+            totalSorteado = 0;
+            
+            const card = document.getElementById('card');
+            card.classList.add('flip');
+            
+            setTimeout(() => {
+                document.getElementById('cardIcon').textContent = '💕';
+                document.getElementById('cardCategory').textContent = 'Início';
+                document.getElementById('cardQuestion').textContent = 'Clique abaixo para sortear sua primeira carta';
+                document.getElementById('counter').textContent = 'Cartas sorteadas: 0';
+                card.classList.remove('flip');
+            }, 400);
+        }
+    </script>
+</body>
+</html>
